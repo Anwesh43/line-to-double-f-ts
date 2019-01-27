@@ -209,3 +209,24 @@ class LineToDoubleF {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+    ltd : LineToDoubleF = new LineToDoubleF()
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        this.ltd.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.ltd.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.ltd.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
