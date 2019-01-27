@@ -1,5 +1,5 @@
 const nodes : number = 5
-const lines : number = 3
+const lines : number = 2
 const scGap : number = 0.05
 const scDiv : number = 0.51
 const strokeFactor : number = 90
@@ -22,4 +22,48 @@ const mirrorValue : Function = (scale : number, a : number, b : number) : number
 }
 const updateValue : Function = (scale : number, dir : number, a : number, b : number) : number => {
     return mirrorValue(scale, a, b) * dir * scGap
+}
+
+const drawLine : Function = (context : CanvasRenderingContext2D, x1 : number, y1 : number, x2 : number, y2 : number) => {
+    context.beginPath()
+    context.moveTo(x1, y1)
+    context.lineTo(x2, y2)
+    context.stroke()
+}
+
+const translateTo : Function = (context : CanvasRenderingContext2D, x : number, y : number, cb : Function) => {
+    context.save()
+    context.translate(x, y)
+    cb(context)
+    context.restore()
+}
+
+const drawF : Function = (context : CanvasRenderingContext2D, size : number, scale : number) => {
+    translateTo(context, 0, -size, (ctx : CanvasRenderingContext2D) => {
+        drawLine(ctx, 0, 0, 0, 2 * size)
+        for (var i = 0; i < lines; i++) {
+            drawLine(ctx, 0, i * size, size/2 * (2 - i) * divideScale(scale, i, lines), i * size)
+        }
+    })
+}
+
+const drawLTDNode : Function = (context : CanvasRenderingContext2D, i : number, scale : number) => {
+    const gap : number = w / (nodes + 1)
+    const size : number = gap / sizeFactor
+    const dSize : number = size / 2
+    const sc1 : number = divideScale(scale, 0, 2)
+    const sc2 : number = divideScale(scale, 1, 2)
+    context.strokeStyle = foreColor
+    context.lineWidth = Math.min(w, h) / strokeFactor
+    context.lineCap = 'round'
+    context.save()
+    context.translate(gap * (i + 1), h/2)
+    for (var j = 0; j < lines; j++) {
+        const sc : number = divideScale(sc1, j, lines)
+        translateTo(context, dSize - 2 * dSize * sc2, 0, (ctx : CanvasRenderingContext2D) => {
+            ctx.rotate(Math.PI * j * (1 - sc2))
+            drawF(ctx, size, scale)
+        })
+    }
+    context.restore()
 }
