@@ -1,13 +1,15 @@
-const nodes : number = 5
+const nodes : number = 1
 const lines : number = 2
 const scGap : number = 0.05
 const scDiv : number = 0.51
 const strokeFactor : number = 90
 const sizeFactor : number = 2.8
-const foreColor : string = "#9C27B0"
+const foreColor : string = "#1565C0"
 const backColor : string = "#bdbdbd"
 const w : number = window.innerWidth
 const h : number = window.innerHeight
+const gapFactor : number = 1.3
+const gapSizeFactor : number = 2
 
 const maxScale : Function = (scale : number, i : number, n : number) : number => {
     return Math.max(0, scale - i / n)
@@ -50,18 +52,19 @@ const drawF : Function = (context : CanvasRenderingContext2D, size : number, sca
 const drawLTDNode : Function = (context : CanvasRenderingContext2D, i : number, scale : number) => {
     const gap : number = w / (nodes + 1)
     const size : number = gap / sizeFactor
-    const dSize : number = size / 2
+    const dSize : number = size / gapSizeFactor
     const sc1 : number = divideScale(scale, 0, 2)
     const sc2 : number = divideScale(scale, 1, 2)
+    const dgap : number = size / gapFactor
     context.strokeStyle = foreColor
     context.lineWidth = Math.min(w, h) / strokeFactor
     context.lineCap = 'round'
     context.save()
     context.translate(gap * (i + 1), h/2)
     for (var j = 0; j < lines; j++) {
-        translateTo(context, dSize - 2 * dSize * sc2 * j, 0, (ctx : CanvasRenderingContext2D) => {
+        translateTo(context, dgap - 2 * dgap * sc2 * j, 0, (ctx : CanvasRenderingContext2D) => {
             ctx.rotate(Math.PI * j * (1 - sc2))
-            drawF(ctx, size, divideScale(sc1, j, lines))
+            drawF(ctx, dSize, divideScale(sc1, j, lines))
         })
     }
     context.restore()
