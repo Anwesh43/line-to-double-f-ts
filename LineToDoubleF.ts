@@ -59,10 +59,9 @@ const drawLTDNode : Function = (context : CanvasRenderingContext2D, i : number, 
     context.save()
     context.translate(gap * (i + 1), h/2)
     for (var j = 0; j < lines; j++) {
-        const sc : number = divideScale(sc1, j, lines)
-        translateTo(context, dSize - 2 * dSize * sc2, 0, (ctx : CanvasRenderingContext2D) => {
+        translateTo(context, dSize - 2 * dSize * sc2 * j, 0, (ctx : CanvasRenderingContext2D) => {
             ctx.rotate(Math.PI * j * (1 - sc2))
-            drawF(ctx, size, scale)
+            drawF(ctx, size, divideScale(sc1, j, lines))
         })
     }
     context.restore()
